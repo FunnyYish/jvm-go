@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"jvmgo/classpath"
+	"log"
+	"strings"
 )
 
 func main() {
@@ -15,6 +18,13 @@ func main() {
 	}
 }
 func startJVM(cmd *Cmd) {
-	fmt.Printf("classpath:%s class:%s args:%v\n", cmd.cpOption, cmd.class, cmd.args)
+	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
+	fmt.Printf("classpath:%v ,class:%v,args:%v\n", cp, cmd.class, cmd.args)
+	className := strings.Replace(cmd.class, ".", "/", -1)
+	data, _, err := cp.ReadClass(className)
+	if err != nil {
+		log.Fatal("无法找到或加载主类", err)
+	}
+	fmt.Printf("class byte code:%v \n", data)
 
 }
